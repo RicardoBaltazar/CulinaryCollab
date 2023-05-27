@@ -4,9 +4,17 @@ namespace App\Http\Controllers\Recipe;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\RecipeRequest;
+use App\Services\RecipeService;
 
 class CreateRecipeController extends Controller
 {
+    private $recipeService;
+
+    public function __construct(RecipeService $recipeService)
+    {
+        $this->recipeService = $recipeService;
+    }
+
     /**
      * Handle the incoming request.
      */
@@ -14,9 +22,6 @@ class CreateRecipeController extends Controller
     {
         $data = $request->all();
 
-        $data['ingredients'] = json_encode($data['ingredients']);
-
-        $data['ingredients'] = json_decode($data['ingredients']);
-        return $data;
+        return $this->recipeService->createRecipe($data);
     }
 }
