@@ -44,8 +44,8 @@ return [
         ],
 
         'mysql' => [
-            'timezone' => 'America/Sao_Paulo',
             'driver' => 'mysql',
+            'timezone' => 'America/Sao_Paulo',
             'url' => env('DATABASE_URL'),
             'host' => env('DB_HOST', '127.0.0.1'),
             'port' => env('DB_PORT', '3306'),
@@ -61,7 +61,7 @@ return [
             'engine' => null,
             'options' => extension_loaded('pdo_mysql') ? array_filter([
                 PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
-            ]) : [],
+                ]) : [],
         ],
 
         'pgsql' => [
