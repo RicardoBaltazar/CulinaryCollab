@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Interfaces\GetCustomQueryInterface;
 use App\Interfaces\RepositoryInterface;
 use App\Repositories\RecipeRepository;
 use App\Repositories\UserRepository;
@@ -18,6 +19,7 @@ class AppServiceProvider extends ServiceProvider
     {
         app()->when(UserService::class)->needs(RepositoryInterface::class)->give(UserRepository::class);
         app()->when(RecipeService::class)->needs(RepositoryInterface::class)->give(RecipeRepository::class);
+        app()->when(RecipeService::class)->needs(GetCustomQueryInterface::class)->give(RecipeRepository::class);
     }
 
     /**

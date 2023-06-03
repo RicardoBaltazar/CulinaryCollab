@@ -2,14 +2,13 @@
 
 namespace App\Repositories;
 
+use App\Interfaces\GetCustomQueryInterface;
 use App\Interfaces\RepositoryInterface;
 use App\Models\Recipe;
 use Exception;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Log;
-use Throwable;
 
-class RecipeRepository implements RepositoryInterface
+class RecipeRepository implements RepositoryInterface, GetCustomQueryInterface
 {
     protected $recipeModel;
 
@@ -27,7 +26,7 @@ class RecipeRepository implements RepositoryInterface
             $errorMessage = 'Internal server error: ' . $e->getMessage();
             Log::error($errorMessage);
             return response()->json([
-                'message' => 'Failed to create the new recipe',
+                'message' => 'Failed to retrieve recipes',
                 'error' => $errorMessage
             ], 500);
         }
@@ -55,19 +54,21 @@ class RecipeRepository implements RepositoryInterface
     public function find(int $id)
     {
         return $this->returnResponse();
-
     }
 
     public function delete(int $id)
     {
         return $this->returnResponse();
-
     }
 
     public function update(int $id, array $attributes)
     {
         return $this->returnResponse();
+    }
 
+    public function getCustomQueryColumn($column, $value)
+    {
+        return $this->recipeModel->where($column, $value)->get();
     }
 
     private function returnResponse()
