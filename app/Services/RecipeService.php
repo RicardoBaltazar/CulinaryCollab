@@ -8,11 +8,11 @@ use Illuminate\Support\Facades\Auth;
 
 class RecipeService
 {
-    private $recipeRepocitory;
+    private $recipeRepository;
 
     public function __construct(RepositoryInterface $recipeRepository)
     {
-        $this->recipeRepocitory = $recipeRepository;
+        $this->recipeRepository = $recipeRepository;
     }
 
     /**
@@ -29,6 +29,6 @@ class RecipeService
         $userId = Auth::id();
         $data['user_id'] = $userId;
 
-        return $this->recipeRepocitory->create($data);
+        return $this->recipeRepository->create($data);
     }
 }
