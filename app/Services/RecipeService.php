@@ -16,6 +16,23 @@ class RecipeService
     }
 
     /**
+     * method to list all recipes
+     *
+     * @return array
+     */
+    public function getRecipes()
+    {
+        $recipes = $this->recipeRepository->all();
+
+        foreach ($recipes as $recipe) {
+            $recipe['ingredients'] = json_decode($recipe['ingredients']);
+            $recipe['instructions'] = json_decode($recipe['instructions']);
+        }
+
+        return $recipes;
+    }
+
+    /**
      * method to create a user recipe
      *
      * @param [type] $data

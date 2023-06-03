@@ -2,8 +2,8 @@
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Recipe\CreateRecipeController;
+use App\Http\Controllers\Recipe\GetRecipeController;
 use App\Http\Controllers\User\CreateUserController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -23,4 +23,5 @@ Route::post('/login', LoginController::class);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/recipe', CreateRecipeController::class);
+    Route::get('/recipe', GetRecipeController::class);
 });

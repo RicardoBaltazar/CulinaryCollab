@@ -21,8 +21,7 @@ class RecipeRepository implements RepositoryInterface
     public function all()
     {
         try {
-            $recipes = $this->recipeModel->all();
-            return response()->json($recipes);
+            return $this->recipeModel->all();
 
         } catch (Exception $e) {
             $errorMessage = 'Internal server error: ' . $e->getMessage();
