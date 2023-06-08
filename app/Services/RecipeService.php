@@ -54,7 +54,6 @@ class RecipeService
      * method to create a user recipe
      *
      * @param [type] $data
-     * @return void
      */
     public function createRecipe($data)
     {
@@ -67,18 +66,12 @@ class RecipeService
         return $this->recipeRepository->create($data);
     }
 
-    private function processRecipes($recipes) {
-        foreach ($recipes as &$recipe) {
-            $recipe['ingredients'] = json_decode($recipe['ingredients']);
-            $recipe['instructions'] = json_decode($recipe['instructions']);
-
-            unset($recipe["created_at"]);
-            unset($recipe["updated_at"]);
-        }
-
-        return $recipes;
-    }
-
+    /**
+     * method to remove a user recipe
+     *
+     * @param [type] $id
+     * @return void
+     */
     public function deleteUuserRecipe($id)
     {
         try {
@@ -91,5 +84,46 @@ class RecipeService
         } catch (\Exception $exception) {
             throw new CustomException('Ocorreu um erro ao excluir a receita.');
         }
+    }
+
+    /**
+     * method to update a user recipe
+     *
+     * @param [type] $id
+     * @return void
+     */
+    public function updateUserRecipe($id, $data)
+    {
+        $data['ingredients'] = json_encode($data['ingredients']);
+        $data['instructions'] = json_encode($data['instructions']);
+
+        try {
+            $this->recipeRepository->update($id, $data);
+            Log::error('Receita atualizada com sucesso.');
+
+        } catch (ModelNotFoundException $exception) {
+            Log::error('Receita não encontrada.');
+            throw new CustomException('Receita não encontrada.');
+        } catch (\Exception $exception) {
+            throw new CustomException('Ocorreu um erro ao atualizar a receita.');
+        }
+    }
+
+    /**
+     *Process the recipes by decoding JSON fields and removing unnecessary keys.
+     *
+     * @param array
+     * @return array
+     */
+    private function processRecipes($recipes) {
+        foreach ($recipes as &$recipe) {
+            $recipe['ingredients'] = json_decode($recipe['ingredients']);
+            $recipe['instructions'] = json_decode($recipe['instructions']);
+
+            unset($recipe["created_at"]);
+            unset($recipe["updated_at"]);
+        }
+
+        return $recipes;
     }
 }

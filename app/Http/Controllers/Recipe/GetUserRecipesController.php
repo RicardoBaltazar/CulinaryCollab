@@ -20,6 +20,6 @@ class GetUserRecipesController extends Controller
     public function __invoke()
     {
         $recipes = $this->recipeService->getUserRecipes();
-        return response()->json($recipes);
+        return response()->json($recipes, 200, [], JSON_UNESCAPED_SLASHES);
     }
 }

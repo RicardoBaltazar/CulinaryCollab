@@ -32,7 +32,7 @@ class RecipeRequest extends FormRequest
             'instructions' => 'required|array|min:1',
             'instructions.*.step' => 'required|integer',
             'instructions.*.description' => 'required|string',
-            'category' => 'required|string|in:Appetizers,Beverages,Breads,Breakfast,Desserts,Main Dishes,Salads,Side Dishes,Soups,Vegetarian/Vegan',
+            'category' => 'required|string|in:Entradas,Bebidas,Pães,Café da Manhã,Sobremesas,Pratos Principais,Saladas,Acompanhamentos,Sopas,Vegetariano/Vegano',
         ];
     }
 

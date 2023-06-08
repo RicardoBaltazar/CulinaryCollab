@@ -6,7 +6,6 @@ use App\Interfaces\GetCustomQueryInterface;
 use App\Interfaces\RepositoryInterface;
 use App\Models\Recipe;
 use Exception;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Log;
 
 class RecipeRepository implements RepositoryInterface, GetCustomQueryInterface
@@ -67,7 +66,8 @@ class RecipeRepository implements RepositoryInterface, GetCustomQueryInterface
 
     public function update(int $id, array $attributes)
     {
-        return $this->returnResponse();
+        $userRecipe = $this->recipeModel->findOrFail($id);
+        $userRecipe->update($attributes);
     }
 
     public function getCustomQueryColumn($column, $value)

@@ -4,8 +4,9 @@ namespace App\Http\Controllers\Recipe;
 
 use App\Http\Controllers\Controller;
 use App\Services\RecipeService;
+use Illuminate\Http\Request;
 
-class GetRecipeController extends Controller
+class UpdateRecipeController extends Controller
 {
     private $recipeService;
 
@@ -17,9 +18,10 @@ class GetRecipeController extends Controller
     /**
      * Handle the incoming request.
      */
-    public function __invoke()
+    public function __invoke(Request $request, int $id)
     {
-        $recipes = $this->recipeService->getRecipes();
-        return response()->json($recipes, 200, [], JSON_UNESCAPED_SLASHES);
+        $data = $request->all();
+        $this->recipeService->updateUserRecipe($id, $data);
+        return response()->json('Receita atualizada com sucesso.');
     }
 }
