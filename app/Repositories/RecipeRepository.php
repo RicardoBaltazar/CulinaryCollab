@@ -6,6 +6,7 @@ use App\Interfaces\GetCustomQueryInterface;
 use App\Interfaces\RepositoryInterface;
 use App\Models\Recipe;
 use Exception;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Log;
 
 class RecipeRepository implements RepositoryInterface, GetCustomQueryInterface
@@ -53,12 +54,15 @@ class RecipeRepository implements RepositoryInterface, GetCustomQueryInterface
 
     public function find(int $id)
     {
-        return $this->returnResponse();
+        Log::info('Receita encontrada.');
+        return $this->recipeModel->findOrFail($id);
     }
 
     public function delete(int $id)
     {
-        return $this->returnResponse();
+        $recipe = $this->recipeModel->findOrFail($id);
+        Log::info('Usuário excluído com sucesso.');
+        return $recipe->delete();
     }
 
     public function update(int $id, array $attributes)

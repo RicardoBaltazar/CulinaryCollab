@@ -5,7 +5,9 @@ namespace App\Services;
 use App\Exceptions\CustomException;
 use App\Interfaces\GetCustomQueryInterface;
 use App\Interfaces\RepositoryInterface;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class RecipeService
 {
@@ -75,5 +77,19 @@ class RecipeService
         }
 
         return $recipes;
+    }
+
+    public function deleteUuserRecipe($id)
+    {
+        try {
+            $this->recipeRepository->delete($id);
+            Log::error('Receita removida com sucesso.');
+
+        } catch (ModelNotFoundException $exception) {
+            Log::error('Receita não encontrada.');
+            throw new CustomException('Receita não encontrada.');
+        } catch (\Exception $exception) {
+            throw new CustomException('Ocorreu um erro ao excluir a receita.');
+        }
     }
 }
