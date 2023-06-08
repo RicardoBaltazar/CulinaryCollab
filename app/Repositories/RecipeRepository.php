@@ -4,11 +4,12 @@ namespace App\Repositories;
 
 use App\Interfaces\GetCustomQueryInterface;
 use App\Interfaces\RepositoryInterface;
+use App\Interfaces\SearchRepositoryInterface;
 use App\Models\Recipe;
 use Exception;
 use Illuminate\Support\Facades\Log;
 
-class RecipeRepository implements RepositoryInterface, GetCustomQueryInterface
+class RecipeRepository implements RepositoryInterface, GetCustomQueryInterface, SearchRepositoryInterface
 {
     protected $recipeModel;
 
@@ -73,6 +74,13 @@ class RecipeRepository implements RepositoryInterface, GetCustomQueryInterface
     public function getCustomQueryColumn($column, $value)
     {
         return $this->recipeModel->where($column, $value)->get();
+    }
+
+    public function searchCustomQueryColumn($attributes)
+    {
+        return $this->recipeModel
+            ->where($attributes['column'], 'like', '%' . $attributes['value'] . '%')
+            ->get();
     }
 
     private function returnResponse()

@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Exceptions\CustomException;
 use App\Interfaces\GetCustomQueryInterface;
 use App\Interfaces\RepositoryInterface;
+use App\Interfaces\SearchRepositoryInterface;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -12,15 +13,18 @@ use Illuminate\Support\Facades\Log;
 class RecipeService
 {
     private $recipeRepository;
-    private $GetCustomQueryRecipeRepository;
+    private $getCustomQueryRecipeRepository;
+    private $searchRecipeRepository;
 
     public function __construct(
         RepositoryInterface $recipeRepository,
-        GetCustomQueryInterface $GetCustomQueryRecipeRepository
+        GetCustomQueryInterface $getCustomQueryRecipeRepository,
+        SearchRepositoryInterface $searchRecipeRepository
     )
     {
         $this->recipeRepository = $recipeRepository;
-        $this->GetCustomQueryRecipeRepository = $GetCustomQueryRecipeRepository;
+        $this->getCustomQueryRecipeRepository = $getCustomQueryRecipeRepository;
+        $this->searchRecipeRepository = $searchRecipeRepository;
     }
 
     /**
@@ -45,7 +49,7 @@ class RecipeService
         $customColumn = 'user_id';
         $customValue = Auth::id();
 
-        $userRecipes = $this->GetCustomQueryRecipeRepository->getCustomQueryColumn($customColumn, $customValue);
+        $userRecipes = $this->getCustomQueryRecipeRepository->getCustomQueryColumn($customColumn, $customValue);
         $processedUserRecipes = $this->processRecipes($userRecipes);
         return $processedUserRecipes;
     }
@@ -64,6 +68,28 @@ class RecipeService
         $data['user_id'] = $userId;
 
         return $this->recipeRepository->create($data);
+    }
+
+        /**
+     * method to create a user recipe
+     *
+     * @param [type] $data
+     */
+    public function searchRecipe($search)
+    {
+        $attributes = [
+            'column' => 'title',
+            'value' => $search,
+        ];
+
+        try {
+            $recipes = $this->searchRecipeRepository->searchCustomQueryColumn($attributes);
+            return $this->processRecipes($recipes);
+
+        } catch (ModelNotFoundException $exception) {
+            Log::error('Receita não encontrada.');
+            throw new CustomException('Receita não encontrada.');
+        }
     }
 
     /**
