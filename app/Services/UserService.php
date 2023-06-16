@@ -2,13 +2,15 @@
 
 namespace App\Services;
 
+use App\Exceptions\CustomException;
 use App\Interfaces\RepositoryInterface;
+use App\Repositories\UserRepository;
 
 class UserService
 {
     private $userRepository;
 
-    public function __construct(RepositoryInterface $userRepository)
+    public function __construct(UserRepository $userRepository)
     {
         $this->userRepository = $userRepository;
     }
@@ -20,6 +22,18 @@ class UserService
      */
     public function createUser(array $data)
     {
-        return $this->userRepository->create($data);
+        try {
+            $user = $this->userRepository->create($data);
+
+            if(!$user)
+            {
+                new CustomException('it was not possible to register the new user');
+            }
+
+            return 'successfully registered user';
+
+        } catch (\Exception $exception) {
+            throw new CustomException($exception->getMessage());
+        }
     }
 }

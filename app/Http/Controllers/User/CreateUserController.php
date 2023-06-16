@@ -20,6 +20,7 @@ class CreateUserController extends Controller
     public function __invoke(UserRequest $request)
     {
         $data = $request->all();
-        return $this->userService->createUser($data);
+        $response = $this->userService->createUser($data);
+        return response()->json($response);
     }
 }
