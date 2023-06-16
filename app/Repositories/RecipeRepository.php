@@ -2,89 +2,26 @@
 
 namespace App\Repositories;
 
-use App\Interfaces\GetCustomQueryInterface;
-use App\Interfaces\RepositoryInterface;
-use App\Interfaces\SearchRepositoryInterface;
 use App\Models\Recipe;
-use Exception;
-use Illuminate\Support\Facades\Log;
 
-class RecipeRepository implements RepositoryInterface, GetCustomQueryInterface, SearchRepositoryInterface
+class RecipeRepository extends BaseRepository
 {
-    protected $recipeModel;
+    protected $recipe;
 
-    public function __construct(Recipe $recipeModel)
+    public function __construct(Recipe $recipe)
     {
-        $this->recipeModel = $recipeModel;
+        parent::__construct(New Recipe());
+
+        $this->recipe = $recipe;
     }
 
-    public function all()
+    public function getUserRecipes($id)
     {
-        try {
-            return $this->recipeModel->all();
-
-        } catch (Exception $e) {
-            $errorMessage = 'Internal server error: ' . $e->getMessage();
-            Log::error($errorMessage);
-            return response()->json([
-                'message' => 'Failed to retrieve recipes',
-                'error' => $errorMessage
-            ], 500);
-        }
+        return $this->recipe->getUserRecipes($id);
     }
 
-    public function create(array $attributes)
+    public function searchRecipe($attributes)
     {
-        try {
-            $newData = $this->recipeModel->create($attributes);
-            return response()->json([
-                'message' => 'successfully registered recipe',
-                'recipe_title' => $newData['title'],
-            ]);
-
-        } catch (Exception $e) {
-            $errorMessage = 'Internal server error: ' . $e->getMessage();
-            Log::error($errorMessage);
-            return response()->json([
-                'message' => 'Failed to create the new recipe',
-                'error' => $errorMessage
-            ], 500);
-        }
-    }
-
-    public function find(int $id)
-    {
-        Log::info('Receita encontrada.');
-        return $this->recipeModel->findOrFail($id);
-    }
-
-    public function delete(int $id)
-    {
-        $recipe = $this->recipeModel->findOrFail($id);
-        Log::info('Usuário excluído com sucesso.');
-        return $recipe->delete();
-    }
-
-    public function update(int $id, array $attributes)
-    {
-        $userRecipe = $this->recipeModel->findOrFail($id);
-        $userRecipe->update($attributes);
-    }
-
-    public function getCustomQueryColumn($column, $value)
-    {
-        return $this->recipeModel->where($column, $value)->get();
-    }
-
-    public function searchCustomQueryColumn($attributes)
-    {
-        return $this->recipeModel
-            ->where($attributes['column'], 'like', '%' . $attributes['value'] . '%')
-            ->get();
-    }
-
-    private function returnResponse()
-    {
-        return response()->json('This functionality is still under development.', 501);
+        return $this->recipe->searchRecipe($attributes);
     }
 }

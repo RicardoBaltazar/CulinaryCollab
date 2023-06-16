@@ -3,9 +3,7 @@
 namespace App\Services;
 
 use App\Exceptions\CustomException;
-use App\Interfaces\GetCustomQueryInterface;
-use App\Interfaces\RepositoryInterface;
-use App\Interfaces\SearchRepositoryInterface;
+use App\Repositories\RecipeRepository;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -13,18 +11,10 @@ use Illuminate\Support\Facades\Log;
 class RecipeService
 {
     private $recipeRepository;
-    private $getCustomQueryRecipeRepository;
-    private $searchRecipeRepository;
 
-    public function __construct(
-        RepositoryInterface $recipeRepository,
-        GetCustomQueryInterface $getCustomQueryRecipeRepository,
-        SearchRepositoryInterface $searchRecipeRepository
-    )
+    public function __construct(RecipeRepository $recipeRepository)
     {
         $this->recipeRepository = $recipeRepository;
-        $this->getCustomQueryRecipeRepository = $getCustomQueryRecipeRepository;
-        $this->searchRecipeRepository = $searchRecipeRepository;
     }
 
     /**
@@ -46,10 +36,7 @@ class RecipeService
      */
     public function getUserRecipes()
     {
-        $customColumn = 'user_id';
-        $customValue = Auth::id();
-
-        $userRecipes = $this->getCustomQueryRecipeRepository->getCustomQueryColumn($customColumn, $customValue);
+        $userRecipes = $this->recipeRepository->getUserRecipes(Auth::id());
         $processedUserRecipes = $this->processRecipes($userRecipes);
         return $processedUserRecipes;
     }
@@ -75,16 +62,16 @@ class RecipeService
      *
      * @param [type] $data
      */
-    public function searchRecipe($search)
+    public function searchRecipe($attributes)
     {
-        $attributes = [
-            'column' => 'title',
-            'value' => $search,
-        ];
-
         try {
-            $recipes = $this->searchRecipeRepository->searchCustomQueryColumn($attributes);
-            return $this->processRecipes($recipes);
+            $recipes = $this->recipeRepository->searchRecipe($attributes);
+
+            // for (var key in obj) {
+            //     newObj[key] = obj[key].replace(/\\/g, "/");
+            //   }
+            $processedUserRecipes = $this->processRecipes($recipes);
+            return $processedUserRecipes;
 
         } catch (ModelNotFoundException $exception) {
             Log::error('Receita não encontrada.');

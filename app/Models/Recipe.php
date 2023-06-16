@@ -20,6 +20,16 @@ class Recipe extends Model
         'category',
     ];
 
+    public function scopeGetUserRecipes($query, int $user_id)
+    {
+        return $query->select()->where('user_id', '=', $user_id)->get();
+    }
+
+    public function scopeSearchRecipe($query, string $attributes)
+    {
+        return $query->select()->where('title', 'like', '%' . $attributes . '%')->get();
+    }
+
     public function users()
     {
         return $this->hasOne(User::class);
