@@ -6,14 +6,10 @@ use App\Exceptions\CustomException;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 
+
 class LoginService
 {
-    /**
-     * method to autenticated the user
-     *
-     * @param [type] $data
-     */
-    public function login($data)
+    public function login(array $data): string
     {
         $user = User::where('email', $data['email'])->first();
 
@@ -23,8 +19,17 @@ class LoginService
 
         $token = $user->createToken('token-name')->plainTextToken;
 
-        return response()->json([
-            'token' => $token
-        ]);
+        return $token;
+    }
+
+    public function logout($request): string
+    {
+        try {
+            $request->user()->currentAccessToken()->delete();
+            return 'Logout realizado com sucesso.';
+
+        } catch (\Exception $exception) {
+            throw new CustomException($exception->getMessage());
+        }
     }
 }

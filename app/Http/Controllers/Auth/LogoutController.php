@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\LoginRequest;
 use App\Services\LoginService;
+use Illuminate\Http\Request;
 
-class LoginController extends Controller
+class LogoutController extends Controller
 {
     private $loginService;
 
@@ -17,13 +17,9 @@ class LoginController extends Controller
     /**
      * Handle the incoming request.
      */
-    public function __invoke(LoginRequest $request)
+    public function __invoke(Request $request)
     {
-        $data = $request->all();
-        $response = $this->loginService->login($data);
-
-        return response()->json([
-            'token' => $response
-        ]);
+        $response = $this->loginService->logout($request);
+        return response()->json($response);
     }
 }

@@ -13,13 +13,8 @@ class UserService
     {
         $this->userRepository = $userRepository;
     }
-    /**
-     * method to register a new user
-     *
-     * @param array $data
-     * @return void
-     */
-    public function createUser(array $data)
+
+    public function createUser(array $data): string
     {
         try {
             $user = $this->userRepository->create($data);

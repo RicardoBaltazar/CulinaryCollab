@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Recipe\CreateRecipeController;
 use App\Http\Controllers\Recipe\DeleteRecipeController;
 use App\Http\Controllers\Recipe\GetRecipeController;
@@ -22,7 +23,6 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::post('/user', CreateUserController::class);
-
 Route::post('/login', LoginController::class);
 
 Route::middleware('auth:sanctum')->group(function () {
@@ -33,4 +33,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user/recipes', GetUserRecipesController::class);
     Route::delete('user/recipe/{id}', DeleteRecipeController::class);
     Route::put('user/recipe/{id}', UpdateRecipeController::class);
+
+    Route::post('logout', LogoutController::class);
 });
