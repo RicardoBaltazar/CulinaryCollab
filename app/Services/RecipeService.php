@@ -19,8 +19,6 @@ class RecipeService
 
     /**
      * method to list all recipes
-     *
-     * @return array
      */
     public function getRecipes()
     {
@@ -31,8 +29,6 @@ class RecipeService
 
     /**
      * method to list all user recipes
-     *
-     * @return array
      */
     public function getUserRecipes()
     {
@@ -43,8 +39,6 @@ class RecipeService
 
     /**
      * method to create a user recipe
-     *
-     * @param [type] $data
      */
     public function createRecipe($data)
     {
@@ -57,33 +51,30 @@ class RecipeService
         return $this->recipeRepository->create($data);
     }
 
-        /**
-     * method to create a user recipe
-     *
-     * @param [type] $data
+    /**
+     * method to search a recipe
      */
     public function searchRecipe($attributes)
     {
         try {
             $recipes = $this->recipeRepository->searchRecipe($attributes);
 
-            // for (var key in obj) {
-            //     newObj[key] = obj[key].replace(/\\/g, "/");
-            //   }
+            if($recipes->isEmpty())
+            {
+                return 'Nenhuma receita encontrada';
+            }
+
             $processedUserRecipes = $this->processRecipes($recipes);
             return $processedUserRecipes;
 
         } catch (ModelNotFoundException $exception) {
-            Log::error('Receita não encontrada.');
-            throw new CustomException('Receita não encontrada.');
+            Log::error('Erro ao pesquisar receita');
+            throw new CustomException($exception->getMessage());
         }
     }
 
     /**
      * method to remove a user recipe
-     *
-     * @param [type] $id
-     * @return void
      */
     public function deleteUuserRecipe($id)
     {
@@ -101,9 +92,6 @@ class RecipeService
 
     /**
      * method to update a user recipe
-     *
-     * @param [type] $id
-     * @return void
      */
     public function updateUserRecipe($id, $data)
     {

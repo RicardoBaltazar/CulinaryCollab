@@ -20,6 +20,6 @@ class SearchRecipeController extends Controller
     public function __invoke($search)
     {
         $recipes = $this->recipeService->searchRecipe($search);
-        return response()->json($recipes, 200, [], JSON_UNESCAPED_UNICODE);
+        return response()->json($recipes, 200, [], JSON_UNESCAPED_SLASHES);
     }
 }

@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Exceptions\CustomException;
-use App\Interfaces\RepositoryInterface;
 use App\Repositories\UserRepository;
 
 class UserService
