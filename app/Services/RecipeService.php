@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Exceptions\CustomException;
+use App\Jobs\CreateRecipeJob;
 use App\Repositories\RecipeRepository;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Auth;
@@ -34,6 +35,7 @@ class RecipeService
     {
         $userRecipes = $this->recipeRepository->getUserRecipes(Auth::id());
         $processedUserRecipes = $this->processRecipes($userRecipes);
+
         return $processedUserRecipes;
     }
 
@@ -48,7 +50,17 @@ class RecipeService
         $userId = Auth::id();
         $data['user_id'] = $userId;
 
-        return $this->recipeRepository->create($data);
+        try {
+            dispatch(new CreateRecipeJob($data));
+
+            //send email notification when recipe is created
+
+            return 'recipe registered successfully';
+
+        } catch (ModelNotFoundException $exception) {
+            Log::error('Error when trying to register a new recipe');
+            throw new CustomException($exception->getMessage());
+        }
     }
 
     /**

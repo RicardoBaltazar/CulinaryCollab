@@ -21,7 +21,7 @@ class CreateRecipeController extends Controller
     public function __invoke(RecipeRequest $request)
     {
         $data = $request->all();
-
-        return $this->recipeService->createRecipe($data);
+        $response = $this->recipeService->createRecipe($data);
+        return response()->json($response);
     }
 }
