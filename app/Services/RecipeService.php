@@ -4,10 +4,14 @@ namespace App\Services;
 
 use App\Exceptions\CustomException;
 use App\Jobs\CreateRecipeJob;
+use App\Jobs\CreateRecipeNotificationJob;
+use App\Notifications\CreateRecipeNotification;
 use App\Repositories\RecipeRepository;
+use App\Repositories\UserRepository;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Notification;
 
 class RecipeService
 {
@@ -52,13 +56,12 @@ class RecipeService
 
         try {
             dispatch(new CreateRecipeJob($data));
+            dispatch(new CreateRecipeNotificationJob($userId));
 
-            //send email notification when recipe is created
-
-            return 'recipe registered successfully';
+            return 'Receita criada com sucesso!';
 
         } catch (ModelNotFoundException $exception) {
-            Log::error('Error when trying to register a new recipe');
+            Log::error('Erro ao tentar registrar uma nova receita');
             throw new CustomException($exception->getMessage());
         }
     }
