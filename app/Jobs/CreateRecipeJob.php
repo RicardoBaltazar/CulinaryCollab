@@ -35,7 +35,6 @@ class CreateRecipeJob implements ShouldQueue
 
             if (!$recipeRepository) {
                 Log::info('RecipeRepository is null');
-                return;
             }
 
             $recipeRepository->create($this->data);

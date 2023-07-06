@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Exceptions\CustomException;
+use Illuminate\Support\Facades\Log;
 use App\Repositories\UserRepository;
 
 class UserService
@@ -21,8 +22,10 @@ class UserService
 
             if(!$user)
             {
-                new CustomException('it was not possible to register the new user');
+                Log::info('it was not possible to register the new user');
             }
+
+            Log::info('Creating new user with queue');
 
             return 'successfully registered user';
 
