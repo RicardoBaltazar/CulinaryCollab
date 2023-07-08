@@ -10,6 +10,7 @@ use App\Repositories\RecipeRepository;
 use App\Repositories\UserRepository;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Notification;
 
@@ -27,8 +28,15 @@ class RecipeService
      */
     public function getRecipes()
     {
-        $recipes = $this->recipeRepository->all();
-        $processedRecipes = $this->processRecipes($recipes);
+        $processedRecipes = Cache::remember('recipes', 60 * 60, function () {
+            $recipes = $this->recipeRepository->all();
+
+            Log::info('querying whitout cache');
+            return $this->processRecipes($recipes);
+        });
+
+        Log::info('querying list of recipes');
+
         return $processedRecipes;
     }
 
@@ -36,9 +44,16 @@ class RecipeService
      * method to list all user recipes
      */
     public function getUserRecipes()
+
     {
-        $userRecipes = $this->recipeRepository->getUserRecipes(Auth::id());
-        $processedUserRecipes = $this->processRecipes($userRecipes);
+        $processedUserRecipes = Cache::remember('userRecipes', 60 * 60, function () {
+            $userRecipes = $this->recipeRepository->getUserRecipes(Auth::id());
+
+            Log::info('querying whitout cache');
+            return $this->processRecipes($userRecipes);
+        });
+
+        Log::info('querying list of user recipes');
 
         return $processedUserRecipes;
     }
@@ -57,6 +72,9 @@ class RecipeService
         try {
             dispatch(new CreateRecipeJob($data));
             dispatch(new CreateRecipeNotificationJob($userId));
+
+            Cache::forget('recipes');
+            Cache::forget('userRecipes');
 
             return 'Receita criada com sucesso!';
 
@@ -94,6 +112,9 @@ class RecipeService
     public function deleteUuserRecipe($id)
     {
         try {
+            Cache::forget('recipes');
+            Cache::forget('userRecipes');
+
             $this->recipeRepository->delete($id);
             Log::error('Receita removida com sucesso.');
 
@@ -114,6 +135,9 @@ class RecipeService
         $data['instructions'] = json_encode($data['instructions']);
 
         try {
+            Cache::forget('recipes');
+            Cache::forget('userRecipes');
+
             $this->recipeRepository->update($id, $data);
             Log::error('Receita atualizada com sucesso.');
 
